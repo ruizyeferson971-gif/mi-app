@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel rojo</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: #100205;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  .panel {
+    width: 100%;
+    max-width: 380px;
+    padding: 24px;
+    border: 2px solid #ff263f;
+    border-radius: 20px;
+    background: #28070d;
+    box-shadow: 0 0 28px #ff163744;
+  }
+  h1 { color: #ff354e; text-align: center; }
+  label { display: block; margin-top: 22px; }
+  input[type="range"] {
+    width: 100%;
+    accent-color: #ff263f;
+    margin-top: 12px;
+  }
+  button {
+    width: 100%;
+    margin-top: 24px;
+    padding: 15px;
+    border: 0;
+    border-radius: 12px;
+    background: #e61935;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  p { font-size: 13px; color: #ffabb6; }
+  #estado { text-align: center; }
+</style>
+</head>
+<body>
+<main class="panel">
+  <h1>🔥 PANEL ROJO</h1>
+  <p>Guarda tus preferencias y aplícalas manualmente
+     en los ajustes del juego.</p>
+
+  <label for="general">
+    Sensibilidad general: <output id="valor">100</output>
+  </label>
+  <input id="general" type="range"
+         min="0" max="200" value="100">
+
+  <label for="boton">
+    Tamaño del botón de disparo:
+    <output id="tamano">50</output>%
+  </label>
+  <input id="boton" type="range"
+         min="10" max="100" value="50">
+
+  <button id="guardar">Guardar preferencias</button>
+  <p id="estado" role="status"></p>
+</main>
+
+<script>
+const general = document.querySelector("#general");
+const boton = document.querySelector("#boton");
+
+function actualizar() {
+  document.querySelector("#valor").textContent = general.value;
+  document.querySelector("#tamano").textContent = boton.value;
+}
+
+try {
+  const datos = JSON.parse(localStorage.getItem("panelRojo"));
+  if (datos) {
+    general.value = datos.general;
+    boton.value = datos.boton;
+  }
+} catch {}
+
+actualizar();
+general.oninput = actualizar;
+boton.oninput = actualizar;
+
+document.querySelector("#guardar").onclick = () => {
+  try {
+    localStorage.setItem("panelRojo", JSON.stringify({
+      general: general.value,
+      boton: boton.value
+    }));
+    document.querySelector("#estado").textContent =
+      "Preferencias guardadas en este navegador.";
+  } catch {
+    document.querySelector("#estado").textContent =
+      "El navegador no permite guardar. Anota tus valores.";
+  }
+};
+</script>
+</body>
+</html>
